@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UPC Search</title>
+  <link rel="stylesheet" type="text/css" href="/styles.css">
+</head>
+<body>
+
+  <h1>UPC Search</h1>
+  <form id="searchForm">
+    <label for="upc">Enter UPC Suffix:</label>
+    <input type="text" id="upc" name="upc" required>
+    <button type="submit">Search</button>
+  </form>
+
+  <!-- Shelf Layout -->
+  <div id="shelves-container">
+    <div class="shelf">
+      <div class="cell" id="cell000">A00</div>
+      <div class="cell" id="cell001">A01</div>
+      <div class="cell" id="cell002">A02</div>
+      <div class="thin-grey-block"></div>
+      <div class="cell" id="cell100">B00</div>
+      <div class="cell" id="cell101">B01</div>
+      <div class="cell" id="cell102">B02</div>
+      <div class="thin-grey-block"></div>
+      <div class="cell" id="cell200">C00</div>
+      <div class="cell" id="cell201">C01</div>
+      <div class="cell" id="cell202">C02</div>
+    </div>
+
+    <div class="shelf">
+      <div class="cell" id="cell010">A10</div>
+      <div class="cell" id="cell011">A11</div>
+      <div class="cell" id="cell012">A12</div>
+      <div class="thin-grey-block"></div>
+      <div class="cell" id="cell110">B10</div>
+      <div class="cell" id="cell111">B11</div>
+      <div class="cell" id="cell112">B12</div>
+      <div class="thin-grey-block"></div>
+      <div class="cell" id="cell210">C10</div>
+      <div class="cell" id="cell211">C11</div>
+      <div class="cell" id="cell212">C12</div>
+    </div>
+
+    <div class="shelf">
+      <div class="cell" id="cell020">A20</div>
+      <div class="cell" id="cell021">A21</div>
+      <div class="cell" id="cell022">A22</div>
+      <div class="thin-grey-block"></div>
+      <div class="cell" id="cell120">B20</div>
+      <div class="cell" id="cell121">B21</div>
+      <div class="cell" id="cell122">B22</div>
+      <div class="thin-grey-block"></div>
+      <div class="cell" id="cell220">C20</div>
+      <div class="cell" id="cell221">C21</div>
+      <div class="cell" id="cell222">C22</div>
+    </div>
+
+    <div class="shelf">
+        <div class="cell" id="cell030">A30</div>
+        <div class="cell" id="cell031">A31</div>
+        <div class="cell" id="cell032">A32</div>
+        <div class="thin-grey-block"></div>
+        <div class="cell" id="cell130">B30</div>
+        <div class="cell" id="cell131">B31</div>
+        <div class="cell" id="cell132">B32</div>
+        <div class="thin-grey-block"></div>
+        <div class="cell" id="cell230">C30</div>
+        <div class="cell" id="cell231">C31</div>
+        <div class="cell" id="cell232">C32</div>
+      </div>
+
+      <div class="shelf">
+        <div class="cell" id="cell040">A40</div>
+        <div class="cell" id="cell041">A41</div>
+        <div class="cell" id="cell042">A42</div>
+        <div class="thin-grey-block"></div>
+        <div class="cell" id="cell140">B40</div>
+        <div class="cell" id="cell141">B41</div>
+        <div class="cell" id="cell142">B42</div>
+        <div class="thin-grey-block"></div>
+        <div class="cell" id="cell240">C40</div>
+        <div class="cell" id="cell241">C41</div>
+        <div class="cell" id="cell242">C42</div>
+      </div>
+
+  </div>
+
+  <div id="results"></div>
+
+  <script src="/scripts.js"></script>
+  <script>
+    document.getElementById("searchForm").addEventListener("submit", function(event) {
+      event.preventDefault();  // Prevent the form from submitting normally
+
+      const upcSuffix = document.getElementById("upc").value;
+
+      // Send a request to the backend using fetch
+      fetch(`/search?upc=${upcSuffix}`)
+        .then(response => response.json())  // Parse the JSON response
+        .then(data => {
+          const resultsDiv = document.getElementById("results");
+          
+          // Reset all cells' background color
+          document.querySelectorAll('.cell').forEach(cell => cell.style.backgroundColor = '');
+
+          if (data.cells.length > 0) {
+            resultsDiv.innerHTML = `<p>Matching cells: ${data.cells.join(', ')}</p>`;
+
+            // Highlight matching cells
+            data.cells.forEach(cell => {
+              const cellElement = document.getElementById(`cell${cell}`);
+              if (cellElement) {
+                cellElement.style.backgroundColor = 'lightgreen'; // Highlight color
+              }
+            });
+          } else {
+            resultsDiv.innerHTML = `<p>No matching cells found.</p>`;
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+          document.getElementById("results").innerHTML = `<p>Error fetching data.</p>`;
+        });
+    });
+  </script>
+
+</body>
+</html>
